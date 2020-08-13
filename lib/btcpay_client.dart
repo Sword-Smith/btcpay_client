@@ -13,6 +13,7 @@ import 'package:pointycastle/digests/ripemd160.dart';
 
 import 'exceptions.dart';
 import 'key_utils.dart';
+import 'models.dart';
 
 class Client {
   /// Create a client based on a server URL and a `AsymmetricKeyPair`.
@@ -113,6 +114,40 @@ class Client {
     var body = await _doRequest(request);
 
     return body['id'];
+  }
+
+  Future<String> addBityPaymentMethod(
+      BitySettingsModel model, String storeId) async {
+    var request = await _httpClient
+        .postUrl(url.replace(path: '$storePath/$storeId/bity/BTC'))
+        .then((request) {
+      request.headers.set('authorization', 'token $userAuthenticationToken');
+      request.headers.contentType = ContentType.json;
+      request.write(jsonEncode(model));
+
+      return request;
+    });
+
+    var body = await _doRequest(request);
+
+    return body['message'];
+  }
+
+  Future<String> addBtcsPaymentMethod(
+      BTCSSettingsRequestModel model, String storeId) async {
+    var request = await _httpClient
+        .postUrl(url.replace(path: '$storePath/$storeId/btcs/BTC'))
+        .then((request) {
+      request.headers.set('authorization', 'token $userAuthenticationToken');
+      request.headers.contentType = ContentType.json;
+      request.write(jsonEncode(model));
+
+      return request;
+    });
+
+    var body = await _doRequest(request);
+
+    return body['message'];
   }
 
   /// Creates an invoice on the remote.
